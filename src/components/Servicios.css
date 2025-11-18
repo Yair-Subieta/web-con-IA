@@ -4,6 +4,13 @@
   margin: 0 auto;
 }
 
+.servicios-container h1 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
 .servicios-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -13,14 +20,15 @@
 
 .servicio-card {
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   overflow: hidden;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .servicio-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
 
 .servicio-imagen {
@@ -29,7 +37,7 @@
   object-fit: cover;
 }
 
-.servicio-contenido {
+.servicio-info {
   padding: 1.5rem;
 }
 
@@ -37,21 +45,61 @@
   font-size: 1.25rem;
   margin-bottom: 1rem;
   color: #333;
+  font-weight: 600;
 }
 
 .servicio-descripcion {
   color: #666;
   line-height: 1.6;
+  margin-bottom: 1.5rem;
+  min-height: 60px;
+}
+
+.precio-estado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.precio {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.estado {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
   .servicios-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .servicios-container h1 {
+    font-size: 2rem;
   }
 }
 
 @media (max-width: 480px) {
   .servicios-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .servicios-container {
+    padding: 1rem;
+  }
+
+  .servicios-container h1 {
+    font-size: 1.75rem;
   }
 }

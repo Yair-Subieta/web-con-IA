@@ -1,71 +1,111 @@
-import './Servicios.css'
-import img1 from '/src/images/img1.jpg'
-import img2 from '/src/images/img2.jpg'
-import img3 from '/src/images/img3.jpg'
-import img4 from '/src/images/img4.jpg'
-import img5 from '/src/images/img5.jpg'
-import img6 from '/src/images/img6.jpg'
+import React, { useEffect, useState } from 'react';
+import { obtenerProductos } from '../services/ApiServicio';
+import './Servicios.css';
 
-const serviciosData = [
-  {
-    id: 1,
-    imagen: img1,
-    titulo: 'Cuidado Veterinario',
-    descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.'
-  },
-  {
-    id: 2,
-    imagen: img2,
-    titulo: 'Peluquería Canina',
-    descripcion: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.'
-  },
-  {
-    id: 3,
-    imagen: img3,
-    titulo: 'Vacunación',
-    descripcion: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.'
-  },
-  {
-    id: 4,
-    imagen: img4,
-    titulo: 'Nutrición Animal',
-    descripcion: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.'
-  },
-  {
-    id: 5,
-    imagen: img5,
-    titulo: 'Adiestramiento',
-    descripcion: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.'
-  },
-  {
-    id: 6,
-    imagen: img6,
-    titulo: 'Guardería',
-    descripcion: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur.'
+interface Producto {
+  id_producto?: number;
+  nombre: string;
+  descripcion: string;
+  imagen: string;
+  estado: string;
+  precio: number;
+}
+
+const Servicios: React.FC = () => {
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [cargando, setCargando] = useState(true);
+
+  // Servicios estáticos de la veterinaria (respaldo)
+  const serviciosEstaticos: Producto[] = [
+    {
+      id_producto: 1,
+      nombre: 'Consulta Veterinaria',
+      descripcion: 'Atención médica profesional para tu mascota. Diagnóstico, revisión general y recomendaciones de salud.',
+      imagen: 'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=500&h=300&fit=crop',
+      estado: 'A',
+      precio: 80
+    },
+    {
+      id_producto: 2,
+      nombre: 'Vacunación',
+      descripcion: 'Plan completo de vacunación para proteger a tu mascota de enfermedades. Incluye vacunas antirrábicas y más.',
+      imagen: 'https://images.unsplash.com/photo-1581888227599-779811939961?w=500&h=300&fit=crop',
+      estado: 'A',
+      precio: 120
+    },
+    {
+      id_producto: 3,
+      nombre: 'Peluquería Canina',
+      descripcion: 'Servicio de estética y cuidado para tu mascota. Baño, corte de pelo, limpieza de oídos y corte de uñas.',
+      imagen: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=500&h=300&fit=crop',
+      estado: 'A',
+      precio: 100
+    }
+  ];
+
+  useEffect(() => {
+    cargarProductos();
+  }, []);
+
+  const cargarProductos = async () => {
+    try {
+      setCargando(true);
+      const data = await obtenerProductos();
+      
+      // Si hay productos en la BD, usarlos. Si no, usar los estáticos
+      if (data && data.length > 0) {
+        setProductos(data);
+        console.log(' Productos cargados desde la base de datos:', data.length);
+      } else {
+        setProductos(serviciosEstaticos);
+        console.log(' No hay productos en la BD. Mostrando servicios estáticos');
+      }
+    } catch (error) {
+      console.error(' Error al cargar productos:', error);
+      // Si falla la conexión, mostrar servicios estáticos
+      setProductos(serviciosEstaticos);
+      console.log(' Error de conexión. Mostrando servicios estáticos');
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  if (cargando) {
+    return (
+      <div className="servicios-container">
+        <div className="loading">
+          <h2>Cargando servicios...</h2>
+        </div>
+      </div>
+    );
   }
-]
 
-const Servicios = () => {
   return (
     <div className="servicios-container">
-      <h2>Nuestros Servicios</h2>
+      <h1>Nuestros Servicios</h1>
       <div className="servicios-grid">
-        {serviciosData.map(servicio => (
-          <div key={servicio.id} className="servicio-card">
+        {productos.map((producto) => (
+          <div key={producto.id_producto} className="servicio-card">
             <img 
-              src={servicio.imagen} 
-              alt={servicio.titulo} 
+              src={producto.imagen} 
+              alt={producto.nombre} 
               className="servicio-imagen"
             />
-            <div className="servicio-contenido">
-              <h3 className="servicio-titulo">{servicio.titulo}</h3>
-              <p className="servicio-descripcion">{servicio.descripcion}</p>
+            <div className="servicio-info">
+              <h3 className="servicio-titulo">{producto.nombre}</h3>
+              <p className="servicio-descripcion">{producto.descripcion}</p>
+              <div className="precio-estado">
+                <span className="precio">Bs. {producto.precio}</span>
+                <span className={`estado ${producto.estado === 'A' ? 'activo' : 'inactivo'}`}>
+                  {producto.estado === 'A' ? 'Disponible' : 'No disponible'}
+                </span>
+              </div>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Servicios
+export default Servicios;
